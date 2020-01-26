@@ -1,0 +1,114 @@
+---
+title: "Assignment_1.1"
+author: "Bore"
+date: "1/26/2020"
+output: html_document
+        github_document
+        
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(1000)
+```
+
+# Simulate the following data
+bmi = alpha + B1*Sexi + B2*Agei + ei #The linear model for body mass index
+
+Agei~N(25, variance = 5)
+Sexi~Bern(0.52)
+ei~N(0,sd=1.7321)
+
+#Parameters
+    B1 = -0.6  
+    B2 = 0.3
+    alpha = -2
+    i = 1:150
+    
+# Fit the linear model in R by 
+    ##1. Using "lm"
+    ##2. Using quasi Newton ("optim") 
+    ##3. Using Newton Raphson by first principle
+    
+    ##|theta^t-theta^t-1| < 0.0001
+
+
+
+```{r simulation}
+bmi = alpha + B1*Sexi + B2*Agei + ei #The linear model for body mass index
+    Agei~N(25, variance = 5)
+    Sexi~Bern(0.52)
+    ei~N(0,sd=1.7321)
+
+#Parameters
+    B1 = -0.6  
+    B2 = 0.3
+    alpha = -2
+    i = 1:150
+
+```
+
+#1. *Simulate using linear model*
+
+```{r lm}
+linear_model <- lm(formula = bmi ~ Sexi+Agei) #The linear model formular
+linear_model
+
+```
+
+#2. Using quasi Newton ("optim")
+
+```{r quasi_Newton_optim}
+
+```
+
+#3. Using Newton Raphson Method
+
+```{r newton_raphson_method}
+
+linear_model_using_newton_raphson = function(bmi, toler = .0001) {
+    #bmi is the linear regression model with 3 parameters
+    startvalue = median(bmi)
+    #n = length(bmi);
+    thetahatcurr = startvalue
+ 
+    
+    
+    # Compute first deriviative of log likelihood
+    #
+    #firstderivll = 2 * sum((bmi - thetahatcurr) / (1 + (bmi - thetahatcurr) ^ 2))
+    
+    # Continue Newton’s method until the first derivative
+    # of the likelihood is within toler of 0.0001
+    
+    while (abs(thetahatnew-thetahatcurr) < toler)
+    {
+        # Compute second derivative of log likelihood
+        secondderivll = 2 * sum(((bmi - thetahatcurr) ^ 2 - 1) / (1 + (bmi - thetahatcurr) ^2) ^ 2)
+        
+        # Compute first derivative of log likelihood
+        
+        firstderivll = 2 * sum((bmi - thetahatcurr) / (1 + (bmi - thetahatcurr) ^ 2))
+        
+        # Newton Raphson method update of estimate of theta
+        
+        thetahatnew = thetahatcurr - firstderivll / secondderivll
+        
+        thetahatcurr = thetahatnew
+        
+        
+     
+    }
+    list(thetahat = thetahatcurr)
+    
+    
+}
+
+```
+
+```{r}
+(linear_model_using_newton_raphson(bmi))
+```
+
+
+
