@@ -6,7 +6,7 @@ library(tidyverse)
 
 set.seed(20200127) # for reproducibility
 
-Age <- rnorm(n = 150, mean = 25, sd = sqrt(5)) %>% 
+age <- rnorm(n = 150, mean = 25, sd = sqrt(5)) %>% 
   tibble::enframe(name = NULL) %>% rename("age" = "value") # simulate age
 
 
@@ -20,7 +20,7 @@ error_term <- rnorm(n = 150, mean = 0, sd = 1.732)%>%
 
 # Formulate Y_i -----------------------------------------------------------
 
-dframe <- bind_cols(sex, Age, error_term) %>% 
+dframe <- bind_cols(sex, age, error_term) %>% 
   mutate(
     alpha = rep(-2, 150) # the y intercept
   )
@@ -66,5 +66,45 @@ sprintf(
 
 
 # (iii) Fitting linear model using Newton Raphson; first principle --------
+
+linear_model_using_newton_raphson = function(  y_hat, toler = .0001) {
+  y_hat = (-2 + 0.6*sex + 0.3*age) #y_hat is the linear regression model with 3 parameters
+  startvalue = median(y_hat)
+  #n = length(bmi);
+  thetahatcurr = startvalue
+  
+  
+  
+  # Compute first deriviative of log likelihood
+  #
+  #firstderivll = 2 * sum((bmi - thetahatcurr) / (1 + (bmi - thetahatcurr) ^ 2))
+  
+  # Continue Newton’s method until the first derivative
+  # of the likelihood is within toler of 0.0001
+  
+  while (abs(thetahatnew-thetahatcurr) < toler)
+  {
+    # Compute second derivative of log likelihood
+    secondderivll = 2 * sum(((y_hat - thetahatcurr) ^ 2 - 1) / (1 + (y_hat - thetahatcurr) ^2) ^ 2)
+    
+    # Compute first derivative of log likelihood
+    
+    firstderivll = 2 * sum((y_hat - thetahatcurr) / (1 + (y_hat - thetahatcurr) ^ 2))
+    
+    # Newton Raphson method update of estimate of theta
+    
+    thetahatnew = thetahatcurr - firstderivll / secondderivll
+    
+    thetahatcurr = thetahatnew
+    
+    
+    
+  }
+  list(thetahat = thetahatcurr)
+  
+}
+list(thetahat = thetahatcurr)
+
+#(linear_model_using_newton_raphson(y_hat))
 
 
