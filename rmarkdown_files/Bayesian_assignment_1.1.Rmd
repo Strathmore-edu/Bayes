@@ -2,9 +2,9 @@
 title: "Assignment_1.1"
 author: "Bore"
 date: "1/26/2020"
-output: html_document
-        github_document
-        
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -12,39 +12,30 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(1000)
 ```
 
-# Simulate the following data
-bmi = alpha + B1*Sexi + B2*Agei + ei #The linear model for body mass index
-
-Agei~N(25, variance = 5)
-Sexi~Bern(0.52)
-ei~N(0,sd=1.7321)
-
-#Parameters
-    B1 = -0.6  
-    B2 = 0.3
-    alpha = -2
-    i = 1:150
-    
-# Fit the linear model in R by 
+# Simulate the following data and fit the linear model in R by 
     ##1. Using "lm"
     ##2. Using quasi Newton ("optim") 
     ##3. Using Newton Raphson by first principle
     
-    ##|theta^t-theta^t-1| < 0.0001
+    ##|theta^t-theta^t-1| < 0.0001 sama as abs(thetahatnew-thetahatcurr) < 0.0001
 
 
 
 ```{r simulation}
-bmi = alpha + B1*Sexi + B2*Agei + ei #The linear model for body mass index
-    Agei~N(25, variance = 5)
-    Sexi~Bern(0.52)
-    ei~N(0,sd=1.7321)
-
+    
 #Parameters
     B1 = -0.6  
     B2 = 0.3
     alpha = -2
     i = 1:150
+    Agei = rnorm(150, 25, sqrt(5))
+    Sexi = rbinom(150, 1, 0.52)  #outcome of 150 observations with trial set to 1 and 0.
+    ei   = rnorm(150, 0, 1.7321)
+    bmi = alpha + B1*Sexi + B2*Agei + ei #The linear model for body mass index 
+    
+linear_model <- lm(formula = bmi ~ Sexi+Agei) #using lm
+
+
 
 ```
 
@@ -53,18 +44,20 @@ bmi = alpha + B1*Sexi + B2*Agei + ei #The linear model for body mass index
 ```{r lm}
 linear_model <- lm(formula = bmi ~ Sexi+Agei) #The linear model formular
 linear_model
-
+summary(linear_model)
 ```
 
 #2. Using quasi Newton ("optim")
 
 ```{r quasi_Newton_optim}
 
+
+
 ```
 
 #3. Using Newton Raphson Method
 
-```{r newton_raphson_method}
+```{r newton_raphson_method, include=TRUE}
 
 linear_model_using_newton_raphson = function(bmi, toler = .0001) {
     #bmi is the linear regression model with 3 parameters
@@ -99,16 +92,20 @@ linear_model_using_newton_raphson = function(bmi, toler = .0001) {
         
      
     }
-    list(thetahat = thetahatcurr)
-    
+     list(thetahat = thetahatcurr)
     
 }
+ #(linear_model_using_newton_raphson(bmi))
 
 ```
 
-```{r}
-(linear_model_using_newton_raphson(bmi))
+```{r echo=TRUE}
+thetahat = thetahatcurr
+thetahat
+#(linear_model_using_newton_raphson(bmi))
+
 ```
+
 
 
 
