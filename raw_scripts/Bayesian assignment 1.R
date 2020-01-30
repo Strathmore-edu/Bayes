@@ -2,7 +2,7 @@
 
 library(tidyverse)
 
-# simlate date given the funtcion inputs ----------------------------------
+# simlate data given the following inputs ----------------------------------
 
 set.seed(20200127) # for reproducibility
 
@@ -15,28 +15,25 @@ sex <- rbinom(n = 150, size = 1, prob = 0.52) %>%
 
 
 error_term <- rnorm(n = 150, mean = 0, sd = 1.732)%>% 
-  tibble::enframe(name = NULL) %>% rename("error" = "value") # error term
+  tibble::enframe(name = NULL) %>% rename("error_term" = "value") # error term
 
 
-# Formulate Y_i -----------------------------------------------------------
+# Construct Y_i(bmi) -----------------------------------------------------------
 
-dframe <- bind_cols(sex, age, error_term) %>% 
+data_frame <- bind_cols(sex, age, error_term) %>% mutate(alpha = rep(-2, 150)) # alpha is the bmi intercept
+
+# To construct bmi = -2 + 0.6*sex + 0.3*Age + error_term
+
+data_frame <- data_frame %>% 
   mutate(
-    alpha = rep(-2, 150) # the y intercept
-  )
-
-# to formulate y_i = -2 + 0.6*sex + 0.3*Age + error_term
-
-dframe <- dframe %>% 
-  mutate(
-    y_hat = (-2 + 0.6*sex + 0.3*age) # expected outcome based on alpha, age, sex 
+    bmi = (-2 + 0.6*sex + 0.3*age ) # expected outcome(bmi) based on alpha, age, sex and error term 
   )
 
 # (i) Fitting linear model using "lm" -------------------------------------
 
-lm_model <- lm(y_hat ~ age + sex, data = dframe)
+lm_model <- lm(bmi ~ age + sex, data = data_frame) #fit using "lm" method
 
-summary(lm_model)
+summary.lm(lm_model)
 
 broom::tidy(lm_model)
 
@@ -47,7 +44,7 @@ broom::tidy(lm_model)
 
 RSS_min <- function(par, df){
   with(df,
-       sum(sum((par[1] + par[2] * sex + par[3] * age - y_hat)^2)) # minimization of sums of squares
+       sum(sum((par[1] + par[2] * sex + par[3] * age - bmi)^2)) # minimization of sums of squares
        )
 }
 
